@@ -1,0 +1,24 @@
+{
+  "name": "syntax-bot",
+  "version": "1.0.0",
+  "description": "Bot which provides syntax and code snippets from SyntaxDB.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anthonyn60/syntax-bot.git"
+  },
+  "keywords": [
+    "Syntax",
+    "syntaxdb",
+    "code"
+  ],
+  "author": "Anthony Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/anthonyn60/syntax-bot/issues"
+  },
+  "homepage": "https://github.com/anthonyn60/syntax-bot#readme"
+}
