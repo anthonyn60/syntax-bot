@@ -18,6 +18,14 @@ syntaxBot.add('/', new builder.CommandDialog()
             builder.DialogAction.beginDialog('/getSyntax');
         }
     })
+    .matches("language|another language|different language",
+          [function(session) {  
+                builder.Prompts.text(session, 'What language would you like to switch to?');
+          }, function(session, results){
+                var apiLink = "https://syntaxdb.com/api/v1/concepts/search?q=" + encodeURIComponent(session.userData.concept.concept_name + " " + results.response).toString();
+                findConcept(apiLink, session);
+          }]
+    )
     .matches("other|another|different|something else", function(session){
         if(session.userData.allConcepts != null && session.userData.current < session.userData.allConcepts.length - 1) {
             session.userData.concept = session.userData.allConcepts[session.userData.current + 1];
@@ -52,6 +60,7 @@ syntaxBot.add('/getSyntax', [
     }
 ]);
 
+
 function sendLink(session){
     session.send("Okay, here's the link: " + "https://syntaxdb.com/ref/" + session.userData.concept.language_permalink + '/' + session.userData.concept.concept_permalink);
 }
@@ -77,7 +86,8 @@ function findConcept(apiLink, session) {
                             session.send("Here's the " + concepts[0].concept_search + " syntax: \n\n" + concepts[0].syntax);
                             session.endDialog();
                         } else {
-                            session.send("Sorry, I could find the syntax for what you just searched. Hopefully I'll be able to some time in the near future.");
+                            var soLink = "http://stackoverflow.com/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
+                            session.send("Sorry, I could find the syntax for what you just searched. Hopefully I'll be able to some time in the near future. In the meantime, here's a link to the same search on StackOverflow: " + soLink);
                         }
                     })
                 });
