@@ -51,7 +51,7 @@ function findConcept(apiLink, session) {
                             }
                             session.userData.concept = concepts[0];
                             session.send("Here's the " + concepts[0].concept_search + " syntax:");
-                            session.send("``` \n\n" + concepts[0].syntax + "\n\n```");
+                            session.send("``` \n\n" + concepts[0].syntax + "\n\n ```");
                             //session.endDialog();
                         } else {
                             var soLink = "http://stackoverflow.com/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
@@ -85,7 +85,7 @@ dialog.on('ChangeLanguageActivity', [
 
 dialog.on('ExampleActivity', function(session){
         if(session.userData.concept){ session.send("Sure, here's an example:");
-                session.send("``` \n\n" + session.userData.concept.example + "\n\n```");
+                session.send("``` \n\n" + session.userData.concept.example + "\n\n ```");
         }  
         else {
             session.send("Sorry, you haven't asked for any syntax so I can't provide you with an example.");
@@ -103,7 +103,7 @@ dialog.on('DifferentConceptActivity', function(session){
      if(session.userData.allConcepts != null && session.userData.current < session.userData.allConcepts.length - 1) {
             session.userData.concept = session.userData.allConcepts[session.userData.current + 1];
             session.send("Okay, here's another. This is the syntax for " + session.userData.concept.concept_search + ":");
-            session.send("```\n\n" + session.userData.concept.syntax + + "\n\n```");
+            session.send("``` \n\n" + session.userData.concept.syntax + + "\n\n ```");
             session.userData.current += 1;
         }
         else if(session.userData.concepts != null || session.userData.concept) {
