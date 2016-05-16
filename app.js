@@ -5,7 +5,7 @@ var builder = require('botbuilder');
 // Create bot and add dialogs
 var model = 'https://api.projectoxford.ai/luis/v1/application?id=f7fce781-ff77-4403-8c45-b5d3f5773643&subscription-key=6bb0629d272d45ab917873b75316b07a';
 var dialog = new builder.LuisDialog(model);
-var syntaxBot = new builder.BotConnectorBot({ appId: 'YourAppId', appSecret: 'YourAppSecret' });
+var syntaxBot = new builder.BotConnectorBot({ appId: 'syntax', appSecret: 'db42de4d8b6c4cb1886def57140570d0' });
 
 syntaxBot.add('/', dialog);
 dialog.on('SyntaxLookupActivity', [
@@ -50,7 +50,8 @@ function findConcept(apiLink, session) {
                                 session.userData.allConcepts = concepts;
                             }
                             session.userData.concept = concepts[0];
-                            session.send("Here's the " + concepts[0].concept_search + " syntax: \n\n" + concepts[0].syntax);
+                            session.send("Here's the " + concepts[0].concept_search + " syntax:");
+                            session.send("``` \n" + concepts[0].syntax);
                             //session.endDialog();
                         } else {
                             var soLink = "http://stackoverflow.com/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
@@ -83,7 +84,9 @@ dialog.on('ChangeLanguageActivity', [
 ])
 
 dialog.on('ExampleActivity', function(session){
-        if(session.userData.concept) session.send("Sure, here's an example:\n\n" + session.userData.concept.example);  
+        if(session.userData.concept){ session.send("Sure, here's an example:");
+                session.send("``` \n" + session.userData.concept.example);
+        }  
         else {
             session.send("Sorry, you haven't asked for any syntax so I can't provide you with an example.");
         }
