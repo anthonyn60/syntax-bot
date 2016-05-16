@@ -27,7 +27,7 @@ dialog.on('SyntaxLookupActivity', [
     },
     function(session, results) {
         if(results.response){
-            if(session.userData.queryConcept) session.userData.syntaxQuery = results.response + " " + session.userData.queryConcept;
+            if(session.userData.queryConcept) session.userData.syntaxQuery = results.response + " " + session.userData.queryLanguage;
             else if(session.userData.queryLanguage) session.userData.syntaxQuery = session.userData.queryConcept + " " + results.response;
             else session.userData.syntaxQuery = results.response;     
         }
