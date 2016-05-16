@@ -27,8 +27,8 @@ dialog.on('SyntaxLookupActivity', [
     },
     function(session, results) {
         if(results.response){
-            if(session.userData.queryConcept) session.userData.syntaxQuery = results.response + " " + session.userData.queryLanguage;
-            else if(session.userData.queryLanguage) session.userData.syntaxQuery = session.userData.queryConcept + " " + results.response;
+            if(session.userData.queryConcept) session.userData.syntaxQuery = results.response + " " + session.userData.queryConcept;
+            else if(session.userData.queryLanguage) session.userData.syntaxQuery = session.userData.queryLanguage + " " + results.response;
             else session.userData.syntaxQuery = results.response;     
         }
         var apiLink = "https://syntaxdb.com/api/v1/concepts/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
@@ -50,7 +50,7 @@ function findConcept(apiLink, session) {
                                 session.userData.allConcepts = concepts;
                             }
                             session.userData.concept = concepts[0];
-                            session.send("Here's the " + concepts[0].concept_search + " syntax:");
+                            //session.send("Here's the " + concepts[0].concept_search + " syntax:");
                             session.send("```" + concepts[0].syntax + "```");
                             //session.endDialog();
                         } else {
