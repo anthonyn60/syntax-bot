@@ -1,5 +1,4 @@
 var https = require('https');
-var restify = require('restify');
 var botkit = require('botkit')
 var builder = require('botbuilder');
 
