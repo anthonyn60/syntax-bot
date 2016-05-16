@@ -50,8 +50,8 @@ function findConcept(apiLink, session) {
                                 session.userData.allConcepts = concepts;
                             }
                             session.userData.concept = concepts[0];
-                            session.send("Here's the " + concepts[0].concept_search + " syntax:");
-                            session.send("```\n" + concepts[0].syntax + "\n```");
+                            //session.send("Here's the " + concepts[0].concept_search + " syntax:");
+                            session.send("``` \n" + concepts[0].syntax + "\n ```");
                             //session.endDialog();
                         } else {
                             var soLink = "http://stackoverflow.com/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
@@ -85,7 +85,7 @@ dialog.on('ChangeLanguageActivity', [
 
 dialog.on('ExampleActivity', function(session){
         if(session.userData.concept){ session.send("Sure, here's an example:");
-                session.send("```\n" + session.userData.concept.example + "\n```");
+                session.send("``` \n" + session.userData.concept.example + "\n ```");
         }  
         else {
             session.send("Sorry, you haven't asked for any syntax so I can't provide you with an example.");
@@ -103,7 +103,7 @@ dialog.on('DifferentConceptActivity', function(session){
      if(session.userData.allConcepts != null && session.userData.current < session.userData.allConcepts.length - 1) {
             session.userData.concept = session.userData.allConcepts[session.userData.current + 1];
             session.send("Okay, here's another. This is the syntax for " + session.userData.concept.concept_search + ":");
-            session.send("```\n" + session.userData.concept.syntax + "\n```");
+            session.send("``` \n" + session.userData.concept.syntax + "\n ```");
             session.userData.current += 1;
         }
         else if(session.userData.concepts != null || session.userData.concept) {
