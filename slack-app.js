@@ -178,8 +178,11 @@ function botInit(bot){
     })
 
     dialog.onDefault(function(session){
-            if(session.userData.concept) session.send('You can ask for an example or a link to the page, or you can ask for another concept by asking for syntax.');
-            else session.send('Hey there, I\'m the syntax box! Ask me for syntax to begin.');
+            if(session.userData.concept){
+              session.send("Sorry, I didn't understand what you just said.");
+             session.send('You can ask for an example or a link to the page, or you can ask for another concept by asking for syntax.');
+           }
+            else session.send('Sorry, I didn\'t understand what you just said. Ask me for syntax to begin.');
     })
 
     syntaxBot.listenForMentions();
