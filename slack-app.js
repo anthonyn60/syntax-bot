@@ -186,6 +186,13 @@ function botInit(bot){
       session.endDialog();
     })
 
+    dialog.on('HelpActivity', function(session){
+      if(session.userData.concept){
+             session.send('You can ask for an example or a link to the page, or you can ask for another concept by asking for syntax.');
+           }
+            else session.send('Ask for a concept and language with the \'syntax\' keyword to begin (i.e. for loop in java syntax).');
+    })
+
     dialog.onDefault(function(session){
             if(session.userData.concept){
               session.send("Sorry, I didn't understand what you just said.");
