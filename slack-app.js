@@ -177,6 +177,15 @@ function botInit(bot){
             }
     })
 
+    dialog.on('ProfanityActivity', function(session){
+      session.send("I don't appreciate that language.");
+    });
+
+    dialog.on('FinishActivity', function(session){
+      session.send("Hope I was able to help. Goodbye!");
+      session.endDialog();
+    })
+
     dialog.onDefault(function(session){
             if(session.userData.concept){
               session.send("Sorry, I didn't understand what you just said.");
