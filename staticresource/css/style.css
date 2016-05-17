@@ -1,0 +1,55 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+
+.icon-block {
+  padding: 0 15px;
+}
+
+body {
+    	height:100%;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+h5 .front-prompt{
+    font-size: 1.3em;
+      margin: 0rem 0rem 0;
+}
+
+.collapsible-body ul li a {
+        color: #444;
+    display: block;
+    font-size: 1rem;
+    height: inherit;
+    line-height: 45px;
+    padding: 0; 
+    margin: 0 1rem 0 2rem; }
+
+  .side-nav li {
+    float: none;
+    padding: 0 0.1; }
+
+    .collapsible-body ul li:hover, .collapsible-body ul li.active {
+      background-color: #9575cd;
+    }
+    .collapsible-body ul li:hover a, .collapsible-body ul li.active a {
+      color: #fff;
+    }
+
+     .tabs .tab a:hover {
+          background-color: #ede7f6;
+         font-weight: bold;
+        color: #f9c9cb; }
+  .tabs .indicator {
+    background-color: #673ab7; }
+

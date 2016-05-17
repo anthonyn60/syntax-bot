@@ -53,7 +53,7 @@ controller.on('create_bot',function(bot,config) {
         if (err) {
           console.log(err);
         } else {
-          convo.say('I am a bot that has just joined your team');
+          convo.say("Hey, I'm the SyntaxBot! Search for any concept with the 'syntax' keyword.");
           convo.say('You must now /invite me to a channel so that I can be of use!');
         }
       });
