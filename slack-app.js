@@ -71,7 +71,7 @@ function trackBot(bot) {
 function botInit(bot){
     var syntaxBot = new builder.SlackBot(controller, bot);
 
-    //syntaxBot.add('/', dialog);
+    syntaxBot.add('/', dialog);
     dialog.on('SyntaxLookupActivity', [
         function(session, args, next){
             var concept = builder.EntityRecognizer.findEntity(args.entities, 'concept');
@@ -226,7 +226,7 @@ controller.storage.teams.all(function(err,teams) {
           console.log('Error connecting bot to Slack:',err,bot);
         } else {
           trackBot(bot);
-          botInit(bot);
+          botInit(teams[t].bot);
         }
       });
     } 
