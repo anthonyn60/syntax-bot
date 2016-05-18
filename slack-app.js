@@ -178,7 +178,7 @@ controller.on('create_bot',function(bot,config) {
 
       if (!err) {
         trackBot(bot);
-        botInit(bot, this.controller);
+        botInit(bot, controller);
       }
 
       bot.startPrivateConversation({user: config.createdBy},function(err,convo) {
@@ -228,7 +228,7 @@ controller.storage.teams.all(function(err,teams) {
           console.log('Error connecting bot to Slack:',err,bot);
         } else {
           trackBot(bot);
-          botInit(bot, this.controller);
+          botInit(bot, t);
         }
       });
     } 
