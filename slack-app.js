@@ -228,7 +228,7 @@ controller.storage.teams.all(function(err,teams) {
           console.log('Error connecting bot to Slack:',err,bot);
         } else {
           trackBot(bot);
-          botInit(bot, t);
+          botInit(bot, controller);
         }
       });
     } 
