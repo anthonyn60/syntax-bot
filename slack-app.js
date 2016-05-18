@@ -68,6 +68,11 @@ function trackBot(bot) {
   _bots[bot.config.token] = bot;
 }
 
+function botAlreadyInit(bot){
+  var syntaxBot = new builder.SlackBot(controller, bot);
+      syntaxBot.add('/', dialog);
+}
+
 function botInit(bot){
     var syntaxBot = new builder.SlackBot(controller, bot);
 
@@ -226,7 +231,7 @@ controller.storage.teams.all(function(err,teams) {
           console.log('Error connecting bot to Slack:',err,bot);
         } else {
           trackBot(bot);
-          botInit(teams[t].bot);
+          botAlreadyInit(bot);
         }
       });
     } 
