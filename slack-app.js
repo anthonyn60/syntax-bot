@@ -175,10 +175,8 @@ controller.on('create_bot',function(bot,config) {
     // already online! do nothing.
   } else {
     bot.startRTM(function(err) {
-
       if (!err) {
         trackBot(bot);
-        botInit(bot, controller);
       }
 
       bot.startPrivateConversation({user: config.createdBy},function(err,convo) {
@@ -196,14 +194,20 @@ controller.on('create_bot',function(bot,config) {
 });
 
 var _bots = {};
+var _init_bot = false;
+
 function trackBot(bot) {
   _bots[bot.config.token] = bot;
+  if(!_init_bot) {
+    botInit(bot);
+  }
 }
 
-function botInit(bot, controller){
+function botInit(bot){
     var syntaxBot = new builder.SlackBot(controller, bot);
     syntaxBot.add('/', dialog);
     syntaxBot.listenForMentions();
+    _init_bot = true;
 }
 
 /*
@@ -215,22 +219,20 @@ bot.startRTM(function(err,bot,payload) {
 */
 
 controller.storage.teams.all(function(err,teams) {
-
   if (err) {
     throw new Error(err);
   }
-
-  for (var t  in teams) {
+  for (var t = 0; t < teams.length; t++) {
     if (teams[t].bot) {
       var curBot = controller.spawn(teams[t]);
       curBot.startRTM(function(err, bot, payload) {
         if (err) {
           console.log('Error connecting bot to Slack:',err,bot);
         } else {
-          trackBot(bot);
-          botInit(bot, controller);
+          console.log(teams.length);
         }
       });
+      trackBot(curBot);
     } 
   }
 
