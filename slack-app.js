@@ -71,6 +71,28 @@ function trackBot(bot) {
 function botAlreadyInit(bot){
   var syntaxBot = new builder.SlackBot(controller, bot);
       syntaxBot.add('/', dialog);
+
+       dialog.on('ChangeLanguageActivity', [
+              function(session, args, next){
+                    if(session.userData.concept) {
+                        var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
+                        if(language) {
+                            session.userData.language = language.entity;
+                            next();
+                        }
+                        else {
+                            builder.Prompts.text(session, 'What language would you like to switch to?');
+                        }
+                    } else {
+                        session.send("Sorry, I can't switch languages if there's no concept to switch for.");
+                    }
+              }, function(session, results){
+                    if(results.response) session.userData.language = results.response;
+                    session.userData.syntaxQuery = session.userData.concept.concept_name + " " + session.userData.language;
+                    var apiLink = "https://syntaxdb.com/api/v1/concepts/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
+                    findConcept(apiLink, session);
+              }
+    ])
 }
 
 function botInit(bot){
