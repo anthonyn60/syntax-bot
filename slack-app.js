@@ -8,98 +8,10 @@ var redis_store = new Redis_Store({url: redis_url});
 
 // Create bot and add dialogs
 var model = 'https://api.projectoxford.ai/luis/v1/application?id=f7fce781-ff77-4403-8c45-b5d3f5773643&subscription-key=6bb0629d272d45ab917873b75316b07a';
+
 var dialog = new builder.LuisDialog(model);
 
-if (!process.env.clientId || !process.env.clientSecret || !process.env.port) {
-  console.log('Error: Specify clientId clientSecret and port in environment');
-  process.exit(1);
-}
-
-var controller = botkit.slackbot({
-  storage: redis_store,
-}).configureSlackApp(
-  {
-    clientId: process.env.clientId,
-    clientSecret: process.env.clientSecret,
-    scopes: ['bot'],
-  }
-);
-
-controller.setupWebserver(process.env.port,function(err,webserver) {
-  controller.createWebhookEndpoints(controller.webserver);
-
-  controller.createOauthEndpoints(controller.webserver,function(err,req,res) {
-    if (err) {
-      res.status(500).send('ERROR: ' + err);
-    } else {
-      res.send('Success!');
-    }
-  });
-});
-
-controller.on('create_bot',function(bot,config) {
-
-  if (_bots[bot.config.token]) {
-    // already online! do nothing.
-  } else {
-    bot.startRTM(function(err) {
-
-      if (!err) {
-        trackBot(bot);
-        botInit(bot);
-      }
-
-      bot.startPrivateConversation({user: config.createdBy},function(err,convo) {
-        if (err) {
-          console.log(err);
-        } else {
-          convo.say("Hey, I'm the SyntaxBot! Search for any concept with the 'syntax' keyword.");
-          convo.say('You must now /invite me to a channel so that I can be of use!');
-        }
-      });
-
-    });
-  }
-
-});
-
-var _bots = {};
-function trackBot(bot) {
-  _bots[bot.config.token] = bot;
-}
-
-function botAlreadyInit(bot){
-  var syntaxBot = new builder.SlackBot(controller, bot);
-      syntaxBot.add('/', dialog);
-
-       dialog.on('ChangeLanguageActivity', [
-              function(session, args, next){
-                    if(session.userData.concept) {
-                        var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
-                        if(language) {
-                            session.userData.language = language.entity;
-                            next();
-                        }
-                        else {
-                            builder.Prompts.text(session, 'What language would you like to switch to?');
-                        }
-                    } else {
-                        session.send("Sorry, I can't switch languages if there's no concept to switch for.");
-                    }
-              }, function(session, results){
-                    if(results.response) session.userData.language = results.response;
-                    session.userData.syntaxQuery = session.userData.concept.concept_name + " " + session.userData.language;
-                    var apiLink = "https://syntaxdb.com/api/v1/concepts/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
-                    findConcept(apiLink, session);
-              }
-    ])
-}
-
-function botInit(bot){
-    var syntaxBot = new builder.SlackBot(controller, bot);
-
-    syntaxBot.add('/', dialog);
-    dialog.on('SyntaxLookupActivity', [
+dialog.on('SyntaxLookupActivity', [
         function(session, args, next){
             var concept = builder.EntityRecognizer.findEntity(args.entities, 'concept');
             var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
@@ -228,6 +140,71 @@ function botInit(bot){
             else session.send('Sorry, I didn\'t understand what you just said. Ask me for syntax to begin.');
     })
 
+
+
+if (!process.env.clientId || !process.env.clientSecret || !process.env.port) {
+  console.log('Error: Specify clientId clientSecret and port in environment');
+  process.exit(1);
+}
+
+var controller = botkit.slackbot({
+  storage: redis_store,
+}).configureSlackApp(
+  {
+    clientId: process.env.clientId,
+    clientSecret: process.env.clientSecret,
+    scopes: ['bot'],
+  }
+);
+
+controller.setupWebserver(process.env.port,function(err,webserver) {
+  controller.createWebhookEndpoints(controller.webserver);
+
+  controller.createOauthEndpoints(controller.webserver,function(err,req,res) {
+    if (err) {
+      res.status(500).send('ERROR: ' + err);
+    } else {
+      res.send('Success!');
+    }
+  });
+});
+
+controller.on('create_bot',function(bot,config) {
+
+  if (_bots[bot.config.token]) {
+    // already online! do nothing.
+  } else {
+    bot.startRTM(function(err) {
+
+      if (!err) {
+        trackBot(bot);
+        botInit(bot);
+      }
+
+      bot.startPrivateConversation({user: config.createdBy},function(err,convo) {
+        if (err) {
+          console.log(err);
+        } else {
+          convo.say("Hey, I'm the SyntaxBot! Search for any concept with the 'syntax' keyword.");
+          convo.say('You must now /invite me to a channel so that I can be of use!');
+        }
+      });
+
+    });
+  }
+
+});
+
+var _bots = {};
+function trackBot(bot) {
+  _bots[bot.config.token] = bot;
+}
+
+function botInit(bot){
+    var syntaxBot = new builder.SlackBot(controller, bot);
+
+    syntaxBot.add('/', dialog);
+
     syntaxBot.listenForMentions();
 }
 
@@ -253,7 +230,7 @@ controller.storage.teams.all(function(err,teams) {
           console.log('Error connecting bot to Slack:',err,bot);
         } else {
           trackBot(bot);
-          botAlreadyInit(bot);
+          botInit(bot);
         }
       });
     } 
