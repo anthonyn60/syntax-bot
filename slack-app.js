@@ -25,7 +25,12 @@ dialog.on('SyntaxLookupActivity', [
                 session.userData.queryLanguage = language.entity;
                 builder.Prompts.text(session, 'Which concept would you like to search in ' + language.entity + '?');
             } else {
-                builder.Prompts.text(session, "Sure, what syntax are you looking for?");
+                if(session.userData.concept){ session.send("Sure, here's the syntax:");
+                        session.send("```" + session.userData.concept.syntax + "```");
+                }  
+                else {
+                    builder.Prompts.text(session, "Sure, what syntax are you looking for?");
+                }
             };
         },
         function(session, results) {
@@ -86,14 +91,66 @@ dialog.on('SyntaxLookupActivity', [
               }
     ])
 
-    dialog.on('ExampleActivity', function(session){
-            if(session.userData.concept){ session.send("Sure, here's an example:");
-                    session.send("```" + session.userData.concept.example + "```");
-            }  
-            else {
-                session.send("Sorry, you haven't asked for any syntax so I can't provide you with an example.");
+    dialog.on('ExampleActivity', [
+        function(session, args, next){
+            var concept = builder.EntityRecognizer.findEntity(args.entities, 'concept');
+            var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
+            if(concept && language) {
+                session.userData.syntaxQuery = concept.entity + " " + language.entity;
+                next();
             }
-    })
+            else if(concept) {
+                session.userData.queryConcept = concept.entity;
+                builder.Prompts.text(session, 'Which language would you like the \'' + concept.entity + '\' code sample in?');
+            } else if(language) {
+                session.userData.queryLanguage = language.entity;
+                builder.Prompts.text(session, 'Which concept would you like a code sample for in ' + language.entity + '?');
+            } 
+            else {
+                if(session.userData.concept){ session.send("Sure, here's an example:");
+                        session.send("```" + session.userData.concept.example + "```");
+                }  
+                else {
+                    builder.Prompts.text(session, "What would you like an example for?");
+                }
+            } 
+        },
+        function(session, results) {
+              if(results.response){
+                  if(session.userData.queryConcept) session.userData.syntaxQuery = results.response + " " + session.userData.queryConcept;
+                  else if(session.userData.queryLanguage) session.userData.syntaxQuery = session.userData.queryLanguage + " " + results.response;
+                  else session.userData.syntaxQuery = results.response;     
+              }
+              var apiLink = "https://syntaxdb.com/api/v1/concepts/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
+              findExample(apiLink, session);
+        }
+    ]);
+    
+    
+        function findExample(apiLink, session) {
+        https.get(apiLink, function(response) {
+                        var body = "";
+                        response.on('data', function(results) {
+                            body += results;
+                        });
+                        response.on('end', function(){
+                            var concepts = JSON.parse(body);
+                            if(concepts.length > 0) {
+                                if(concepts.length > 1) {
+                                    session.userData.current = 0;
+                                    session.userData.allConcepts = concepts;
+                                }
+                                session.userData.concept = concepts[0];
+                                session.send("Here's a " + concepts[0].concept_search + " code sample:");
+                                session.send("```" + concepts[0].example + "```");
+                                //session.endDialog();
+                            } else {
+                                var soLink = "http://stackoverflow.com/search?q=" + encodeURIComponent(session.userData.syntaxQuery).toString();
+                                session.send("Sorry, I could find an example for what you just searched. Hopefully I'll be able to some time in the near future. In the meantime, here's a link to the same search on StackOverflow: " + soLink);
+                            }
+                        })
+                    });
+    }
 
     dialog.on('LinkActivity', function(session){
             if(session.userData.concept) session.send("Okay, here's the link: " + "https://syntaxdb.com/ref/" + session.userData.concept.language_permalink + '/' + session.userData.concept.concept_permalink);
