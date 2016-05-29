@@ -16,13 +16,17 @@ dialog.on('SyntaxLookupActivity', [
             var concept = builder.EntityRecognizer.findEntity(args.entities, 'concept');
             var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
             if(concept && language) {
-                session.userData.syntaxQuery = concept.entity + " " + language.entity;
+                if(language.entity === "c #") session.userData.syntaxQuery = concept.entity + " C#";
+                else if(language.entity === "c + +") session.userData.syntaxQuery = concept.entity + " C++";
+                else session.userData.syntaxQuery = concept.entity + " " + language.entity;
                 next();
             } else if(concept) {
                 session.userData.queryConcept = concept.entity;
                 builder.Prompts.text(session, 'Which language would you like to search \'' + concept.entity + '\' in?');
             } else if(language) {
-                session.userData.queryLanguage = language.entity;
+                if(language.entity === "c #") session.userData.queryLanguage = "C#";
+                else if(language.entity === "c + +") session.userData.queryLanguage = "C++";
+                else session.userData.queryLanguage = language.entity;
                 builder.Prompts.text(session, 'Which concept would you like to search in ' + language.entity + '?');
             } else {
                 if(session.userData.concept){ session.send("Sure, here's the syntax:");
@@ -74,7 +78,9 @@ dialog.on('SyntaxLookupActivity', [
                     if(session.userData.concept) {
                         var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
                         if(language) {
-                            session.userData.language = language.entity;
+                            if(language.entity === "c #") session.userData.language = "C#";
+                            else if(language.entity === "c + +") session.userData.language = "C++";
+                            else session.userData.language = language.entity;
                             next();
                         }
                         else {
@@ -96,15 +102,19 @@ dialog.on('SyntaxLookupActivity', [
             var concept = builder.EntityRecognizer.findEntity(args.entities, 'concept');
             var language = builder.EntityRecognizer.findEntity(args.entities, 'language');
             if(concept && language) {
-                session.userData.syntaxQuery = concept.entity + " " + language.entity;
+                if(language.entity === "c #") session.userData.syntaxQuery = concept.entity + " C#";
+                else if(language.entity === "c + +") session.userData.syntaxQuery = concept.entity + " C++";
+                else session.userData.syntaxQuery = concept.entity + " " + language.entity;
                 next();
             }
             else if(concept) {
                 session.userData.queryConcept = concept.entity;
                 builder.Prompts.text(session, 'Which language would you like the \'' + concept.entity + '\' code sample in?');
             } else if(language) {
-                session.userData.queryLanguage = language.entity;
-                builder.Prompts.text(session, 'Which concept would you like a code sample for in ' + language.entity + '?');
+                if(language.entity === "c #") session.userData.queryLanguage = " C#";
+                else if(language.entity === "c + +") session.userData.queryLanguage = " C++";
+                else session.userData.queryLanguage = language.entity;
+                builder.Prompts.text(session, 'Which concept would you like a code sample for in ' + session.userData.queryLanguage + '?');
             } 
             else {
                 if(session.userData.concept){ session.send("Sure, here's an example:");
